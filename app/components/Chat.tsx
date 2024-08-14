@@ -73,22 +73,10 @@ const Chat = () => {
       messages: [systemMessage, ...apiMessages]
     }
 
-    const response = await openai.chat.completions.create(apiRequestBody)
-    const data = response.choices[0].message.content
-
-    setMessages([
-      ...chatMessages,
-      {
-        message: String(data),
-        sender: 'ChatGPT',
-        direction: 'incoming',
-        position: 'normal'
-      }
-    ])
-
-    localStorage.setItem(
-      'messages',
-      JSON.stringify([
+    try {
+      const response = await openai.chat.completions.create(apiRequestBody)
+      const data = response.choices[0].message.content
+      setMessages([
         ...chatMessages,
         {
           message: String(data),
@@ -97,7 +85,23 @@ const Chat = () => {
           position: 'normal'
         }
       ])
-    )
+
+      localStorage.setItem(
+        'messages',
+        JSON.stringify([
+          ...chatMessages,
+          {
+            message: String(data),
+            sender: 'ChatGPT',
+            direction: 'incoming',
+            position: 'normal'
+          }
+        ])
+      )
+    } catch (error) {
+      alert(error)
+    }
+
     setTyping(false)
   }
 
